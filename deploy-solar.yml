@@ -1,0 +1,80 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  RoleARN:
+    Type: String
+  Verb:
+    Type: String
+    Default: lambda
+  ApiKey:
+    Type: String
+    Default: 7fP1f3Wg3ZdLeNiQue3LbTJ6Ust5c5C0secZ1jim
+
+Resources:
+
+
+  retrieveSolarLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: source/retrieve_solar_viability/
+      FunctionName: !Sub "retrieve_solar_viability-${AWS::StackName}"
+      Handler: retrieve_solar_viability.lambda_handler
+      Role: !Ref RoleARN
+      Runtime: python3.9
+      Timeout: 300
+      Environment:
+        Variables:
+          API_KEY: !Ref ApiKey
+
+  # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-httpapi.html
+  #   AWS::Serverless::HttpApi
+
+  retrieveSolarLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref retrieveSolarLambda
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${retrieveSolarAPIGateway}/*/*/${Verb}'
+
+  retrieveSolarAPIGateway:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Sub 'retrieveSolar-${AWS::StackName}'
+      ProtocolType: HTTP
+
+  retrieveSolarAPIIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref retrieveSolarAPIGateway
+      ConnectionType: INTERNET
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: POST
+      IntegrationUri: !Join
+        - ''
+        - - !Sub 'arn:${AWS::Partition}:apigateway:${AWS::Region}'
+          - ':lambda:path/2015-03-31/functions/'
+          - !Sub '${retrieveSolarLambda.Arn}/invocations'
+      PayloadFormatVersion: 2.0
+
+  retrieveSolarAPIGatewayRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref retrieveSolarAPIGateway
+      AuthorizationType: NONE
+      RouteKey: !Sub 'ANY /${Verb}'      ### /lambda'       #!Sub 'GET /${Verb}'   # was POST
+      Target: !Sub 'integrations/${retrieveSolarAPIIntegration}'
+
+  retrieveSolarStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref retrieveSolarAPIGateway
+      StageName: $default
+      AutoDeploy: true
+
+
+Outputs:
+  retrieveSolarURL:
+    Value: !Sub 'https://${retrieveSolarAPIGateway}.execute-api.${AWS::Region}.amazonaws.com/${Verb}'
