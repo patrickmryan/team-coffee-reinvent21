@@ -7,7 +7,7 @@ Parameters:
     Type: String
   Verb:
     Type: String
-    Default: retrieve
+    Default: lambda
   ApiKey:
     Type: String
     Default: 7fP1f3Wg3ZdLeNiQue3LbTJ6Ust5c5C0secZ1jim
@@ -62,14 +62,14 @@ Resources:
         - - !Sub 'arn:${AWS::Partition}:apigateway:${AWS::Region}'
           - ':lambda:path/2015-03-31/functions/'
           - !Sub '${retrieveSolarLambda.Arn}/invocations'
-      PayloadFormatVersion: 1.0
+      PayloadFormatVersion: 2.0
 
   retrieveSolarAPIGatewayRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiId: !Ref retrieveSolarAPIGateway
       AuthorizationType: NONE  # change later
-      RouteKey: !Sub 'GET /${Verb}'   # was POST
+      RouteKey: !Sub 'ANY /${Verb}'      ### /lambda'       #!Sub 'GET /${Verb}'   # was POST
       Target: !Sub 'integrations/${retrieveSolarAPIIntegration}'
 
   retrieveSolarStage:
