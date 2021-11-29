@@ -11,3 +11,17 @@ Visit [wind&sun](https://team-coffee-reinvent21-bse847tmj-patrickmryan.vercel.ap
 
 ## Desired features
 While our prototype is limited to only offering solar power estimates, there is support to produce similiar estimates for wind power. This will offer a more complete picture of the potential of converting to renewable soureces.
+
+## Impact - enviornmental sustainability
+wind&sun makes it easy to see the impacts of larger scale conversion to renewable energy. It is our experience that when something is easy, it is more likely to be implemented.
+
+## Impact - social sustainability
+wind&sun empowers smart decisions around converting to sustainable energy sources, leading to decresing the carbon footprint of households, organizations, and communities.
+## Innovation
+wind&sun takes the ideas of existing applications (eg project sunroof) and increases scale. With wind&sun, the impact of going green is visible not only on the level of the individual, but on the level of neighborhoods, corperations, or municipalities.
+## Data usage
+wind&sun uses the the [NREL National Solar Radiation Database](https://registry.opendata.aws/nrel-pds-nsrdb/) to provide solar potential estimates for carbon reduction calculations.
+## Architecture
+wind&sun is lightweight by design, leveraging AWS lambda and next js to minimize resource usage.
+## Readiness
+While currently wind&sun is a limited prototype, there are [additional datasets](https://registry.opendata.aws/nrel-pds-wtk/) to support providing estimates for the adoption of wind power.
