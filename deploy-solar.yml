@@ -24,14 +24,9 @@ Resources:
       Role: !Ref RoleARN
       Runtime: python3.9
       Timeout: 300
-      # VpcConfig:
-      #   SubnetIds: !Ref LambdaSubnets
-      #   SecurityGroupIds:
-      #     - !Ref PAVMLifecycleHookLambdaSecurityGroup
       Environment:
         Variables:
           API_KEY: !Ref ApiKey
-
 
   # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-httpapi.html
   #   AWS::Serverless::HttpApi
@@ -68,7 +63,7 @@ Resources:
     Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiId: !Ref retrieveSolarAPIGateway
-      AuthorizationType: NONE  # change later
+      AuthorizationType: NONE
       RouteKey: !Sub 'ANY /${Verb}'      ### /lambda'       #!Sub 'GET /${Verb}'   # was POST
       Target: !Sub 'integrations/${retrieveSolarAPIIntegration}'
 
@@ -81,6 +76,5 @@ Resources:
 
 
 Outputs:
-
   retrieveSolarURL:
     Value: !Sub 'https://${retrieveSolarAPIGateway}.execute-api.${AWS::Region}.amazonaws.com/${Verb}'

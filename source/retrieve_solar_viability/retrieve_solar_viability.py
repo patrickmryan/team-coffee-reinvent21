@@ -36,19 +36,26 @@ def lambda_handler(event, context):
     url = f'{host}/{api}?' + urlencode(params)
 
     response = http.request( "GET", url )
-    solrad_annual = json.loads(response.data.decode())  # "utf-8"
+    details = json.loads(response.data.decode())  # "utf-8"
+
+    solrad_annual = details['outputs']['solrad_annual']
 
     api = 'utility_rates/v3.json'
     url = f'{host}/{api}?' + urlencode(params)
 
     response = http.request( "GET", url )
-    utility_rates = json.loads(response.data.decode())
+    details = json.loads(response.data.decode())
+    rate = details['outputs']['residential']
 
+    # {
+    #    kwhPerM2PerDay, # from solrad_annual kWh/m2/day
+    #    co2eqSavedPerYearPerM2, # solrad_annual * 365 * (0.39 - 0.05)
+    #    costsSavedPerYearPerM2, # From other API endpoint -> residential $/kWh residential * 24 * 365
+    # }
 
     return {
-        'dollar_per_kwh' : utility_rates['outputs']['residential'],
+        'kwhPerM2PerDay' : solrad_annual,
+        'co2eqSavedPerYearPerM2' : solrad_annual * 365*(0.39 - 0.05),
+        'costsSavedPerYearPerM2' :rate * 24 *365
 
-
-        'solrad_annual' : solrad_annual,
-        'utility_rates': utility_rates
     }
