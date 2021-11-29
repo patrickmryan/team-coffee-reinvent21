@@ -18,7 +18,7 @@ wind&sun makes it easy to see the impacts of larger scale conversion to renewabl
 ## Impact - social sustainability
 wind&sun empowers smart decisions around converting to sustainable energy sources, leading to decresing the carbon footprint of households, organizations, and communities.
 ## Innovation
-wind&sun takes the ideas of existing applications (eg project sunroof) and increases scale. With wind&sun, the impact of going green is visible not only on the level of the individual, but on the level of neighborhoods, corperations, or municipalities.
+wind&sun takes the ideas of existing applications (eg [project sunroof](https://sunroof.withgoogle.com)) and increases scale. With wind&sun, the impact of going green is visible not only on the level of the individual, but on the level of neighborhoods, corporations, or municipalities.
 ## Data usage
 wind&sun uses the the [NREL National Solar Radiation Database](https://registry.opendata.aws/nrel-pds-nsrdb/) to provide solar potential estimates for carbon reduction calculations.
 ## Architecture
