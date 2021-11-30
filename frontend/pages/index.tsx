@@ -25,7 +25,7 @@ const Home: NextPage = () => {
       <div
         className="grid gap-4 min-h-screen text-white py-20 relative max-w-2xl mx-auto"
         style={{
-          gridTemplateRows: "max-content 1fr max-content max-content",
+          gridTemplateRows: "max-content 1fr",
         }}
       >
         <Head>
@@ -37,36 +37,9 @@ const Home: NextPage = () => {
           wind&sun
         </h1>
         <main className="flex items-center align-middle justify-center">
-          {step === 0 && <Intro />}
-          {step === 1 && <Bridge />}
+          {step === 0 && <Intro next={() => setStep(step + 1)} />}
+          {step === 1 && <Bridge next={() => setStep(step)} />}
         </main>
-
-        <div className="flex justify-between px-10">
-          <div>
-            {step > 0 && (
-              <button
-                className="border-2 border-white px-7 py-1 rounded-xl hover:bg-white hover:bg-opacity-20"
-                onClick={() => setStep(step - 1)}
-              >
-                Back
-              </button>
-            )}
-          </div>
-          <div>
-            {step < 1 && (
-              <button
-                className="border-2 border-white px-7 py-1 rounded-xl hover:bg-white hover:bg-opacity-20"
-                onClick={() => setStep(step + 1)}
-              >
-                Next
-              </button>
-            )}
-          </div>
-        </div>
-
-        <footer className="flex items-center justify-center w-full text-sm">
-          Powered by us
-        </footer>
       </div>
     </>
   );
