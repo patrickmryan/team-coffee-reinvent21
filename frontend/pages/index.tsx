@@ -3,6 +3,8 @@ import Head from "next/head";
 import { useState } from "react";
 import classNames from "classnames";
 import Image from "next/image";
+import Bridge from "../components/Bridge";
+import Intro from "../components/Intro";
 
 type Savings = {
   kwhPerM2PerDay: number;
@@ -13,111 +15,60 @@ type Savings = {
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 const Home: NextPage = () => {
-  const [address, setAddress] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [savings, setSavings] = useState<Savings>();
-
-  const submitAddress = async () => {
-    setLoading(true);
-    await delay(1000);
-    setLoading(false);
-    setSavings({
-      kwhPerM2PerDay: 12,
-      CO2eqSavedPerYearPerM2: 42,
-      costsSavedPerYearPerM2: 420,
-    });
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    //it triggers by pressing the enter key
-    if (e.key === "Enter") {
-      submitAddress();
-    }
-  };
+  const [step, setStep] = useState(0);
+  console.log(step);
 
   return (
-    <div className="min-h-screen py-2 bg-solar text-white">
-      <Head>
-        <title>wind&sun</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <>
+      <div className="fixed inset-0 bg-solar" />
+      <div className="fixed inset-0 bg-black bg-opacity-50" />
+      <div
+        className="grid gap-4 min-h-screen text-white py-20 relative max-w-2xl mx-auto"
+        style={{
+          gridTemplateRows: "max-content 1fr max-content max-content",
+        }}
+      >
+        <Head>
+          <title>wind&sun</title>
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
 
-      <main className="px-20 text-center">
-        <h1
-          className={classNames("text-6xl font-bold", {
-            "mt-44": !savings,
-            "mt-12": savings,
-          })}
-        >
+        <h1 className={classNames("text-6xl font-bold text-center")}>
           wind&sun
         </h1>
-        <div className="flex justify-center gap-4 my-8">
-          <input
-            type="text"
-            className="text-black p-2 rounded-md"
-            placeholder="Your address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            onKeyPress={handleKeyPress}
-          />
-          <button onClick={submitAddress}>Submit</button>
+        <main className="flex items-center align-middle justify-center">
+          {step === 0 && <Intro />}
+          {step === 1 && <Bridge />}
+        </main>
+
+        <div className="flex justify-between px-10">
+          <div>
+            {step > 0 && (
+              <button
+                className="border-2 border-white px-7 py-1 rounded-xl hover:bg-white hover:bg-opacity-20"
+                onClick={() => setStep(step - 1)}
+              >
+                Back
+              </button>
+            )}
+          </div>
+          <div>
+            {step < 1 && (
+              <button
+                className="border-2 border-white px-7 py-1 rounded-xl hover:bg-white hover:bg-opacity-20"
+                onClick={() => setStep(step + 1)}
+              >
+                Next
+              </button>
+            )}
+          </div>
         </div>
-        {/* Results */}
-        {loading && (
-          <div className="flex justify-center items-center">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-200"></div>
-          </div>
-        )}{" "}
-        {savings && (
-          <div className="border-4 border-dashed rounded-md text-left p-8 mb-8 bg-gray-500 bg-opacity-50">
-            <h2 className="text-4xl mb-4">Your address: {address}</h2>
 
-            <div className="flex items-center gap-4">
-              <Image
-                src="/sun-icon.svg"
-                alt="Sun icon"
-                width={150}
-                height={150}
-              />
-              <div>
-                <p>
-                  You can save{" "}
-                  <strong className="text-2xl">
-                    {savings.kwhPerM2PerDay} kwh
-                  </strong>{" "}
-                  per square meter per day
-                </p>
-                <p>
-                  Which equals{" "}
-                  <strong className="text-2xl">
-                    {savings.CO2eqSavedPerYearPerM2} kg
-                  </strong>{" "}
-                  of CO<sub>2</sub> savings per year per square meter
-                </p>
-                <p>
-                  Which corresponds to{" "}
-                  <strong className="text-2xl">
-                    ${savings.costsSavedPerYearPerM2}
-                  </strong>{" "}
-                  of potential savings per year per square meter.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-      </main>
-
-      <footer className="flex items-center justify-center w-full h-24 border-t">
-        <a
-          className="flex items-center justify-center"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <footer className="flex items-center justify-center w-full text-sm">
           Powered by us
-        </a>
-      </footer>
-    </div>
+        </footer>
+      </div>
+    </>
   );
 };
 
