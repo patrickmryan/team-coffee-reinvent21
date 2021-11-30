@@ -1,7 +1,4 @@
-import type { NextPage } from "next";
-import Head from "next/head";
 import { useState } from "react";
-import classNames from "classnames";
 import Image from "next/image";
 
 type Savings = {
@@ -18,19 +15,19 @@ const round = (number: number) => {
 
 const Bridge = () => {
   const [address, setAddress] = useState("");
-  const [m2, setm2] = useState(10);
+  const [m2, setm2] = useState<number>();
   const [loading, setLoading] = useState(false);
   const [savings, setSavings] = useState<Savings>();
 
   const submitAddress = async () => {
     setLoading(true);
     await delay(1000);
-    setLoading(false);
 
-    const url = "/api/estimate";
+    const url = `/api/estimate?address=${address}`;
     fetch(url, { mode: "no-cors" })
       .then((response) => response.json())
       .then((json: Savings) => {
+        setLoading(false);
         setSavings({
           kwhPerM2PerDay: json.kwhPerM2PerDay,
           co2eqSavedPerYearPerM2: json.co2eqSavedPerYearPerM2,
@@ -62,7 +59,7 @@ const Bridge = () => {
           onKeyPress={handleKeyPress}
         />
         <input
-          type="text"
+          type="number"
           className="text-black p-2 rounded-md"
           placeholder="Roof m2"
           value={m2}
@@ -92,21 +89,21 @@ const Bridge = () => {
               <p>
                 You can save{" "}
                 <strong className="text-2xl">
-                  {round(savings.kwhPerM2PerDay * m2 * 365)} kwh
+                  {round(savings.kwhPerM2PerDay * (m2 || 1) * 365)} kwh
                 </strong>{" "}
                 for your house per year
               </p>
               <p>
                 Which equals{" "}
                 <strong className="text-2xl">
-                  {round(savings.co2eqSavedPerYearPerM2 * m2)} kg
+                  {round(savings.co2eqSavedPerYearPerM2 * (m2 || 1))} kg
                 </strong>{" "}
                 of CO<sub>2</sub> savings per year for your house
               </p>
               <p>
                 Which corresponds to{" "}
                 <strong className="text-2xl">
-                  ${round(savings.costsSavedPerYearPerM2 * m2)}
+                  ${round(savings.costsSavedPerYearPerM2 * (m2 || 1))}
                 </strong>{" "}
                 of potential savings per year for your house.
               </p>
