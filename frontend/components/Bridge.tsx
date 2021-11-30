@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Image from "next/image";
+import classNames from "classnames";
 
 type Savings = {
   kwhPerM2PerDay: number;
@@ -180,9 +181,3 @@ const Bridge = ({ next }: any) => {
 };
 
 export default Bridge;
-function classNames(
-  arg0: string,
-  arg1: { "bg-white bg-opacity-50": boolean }
-): string | undefined {
-  throw new Error("Function not implemented.");
-}
