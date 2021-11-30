@@ -12,7 +12,7 @@ const Intro = ({ next }: any) => {
       </p>
       <p className="text-xl mt-4">
         We understand solar panel efficiency greatly varies depending on where
-        you live - so we're using data from{" "}
+        you live - so we&apos;re using data from{" "}
         <a
           href="https://registry.opendata.aws/nrel-pds-nsrdb/"
           target="_blank"
