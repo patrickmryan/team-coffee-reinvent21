@@ -62,6 +62,6 @@ def lambda_handler(event, context):
     return {
         'kwhPerM2PerDay' : solrad_annual,
         'co2eqSavedPerYearPerM2' : solrad_annual * 365*(0.39 - 0.05),
-        'costsSavedPerYearPerM2' :rate * 24 *365
+        'costsSavedPerYearPerM2' : rate * solrad_annual * 365
 
     }
