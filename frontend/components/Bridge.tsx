@@ -6,11 +6,15 @@ import Image from "next/image";
 
 type Savings = {
   kwhPerM2PerDay: number;
-  CO2eqSavedPerYearPerM2: number;
+  co2eqSavedPerYearPerM2: number;
   costsSavedPerYearPerM2: number;
 };
 
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
+const round = (number: number) => {
+  return Math.round(number * 100) / 100;
+};
 
 const Bridge = () => {
   const [address, setAddress] = useState("");
@@ -22,11 +26,17 @@ const Bridge = () => {
     setLoading(true);
     await delay(1000);
     setLoading(false);
-    setSavings({
-      kwhPerM2PerDay: 12,
-      CO2eqSavedPerYearPerM2: 42,
-      costsSavedPerYearPerM2: 420,
-    });
+
+    const url = "/api/estimate";
+    fetch(url, { mode: "no-cors" })
+      .then((response) => response.json())
+      .then((json: Savings) => {
+        setSavings({
+          kwhPerM2PerDay: json.kwhPerM2PerDay,
+          co2eqSavedPerYearPerM2: json.co2eqSavedPerYearPerM2,
+          costsSavedPerYearPerM2: json.costsSavedPerYearPerM2,
+        });
+      });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -82,21 +92,21 @@ const Bridge = () => {
               <p>
                 You can save{" "}
                 <strong className="text-2xl">
-                  {savings.kwhPerM2PerDay * m2 * 365} kwh
+                  {round(savings.kwhPerM2PerDay * m2 * 365)} kwh
                 </strong>{" "}
                 for your house per year
               </p>
               <p>
                 Which equals{" "}
                 <strong className="text-2xl">
-                  {savings.CO2eqSavedPerYearPerM2 * m2} kg
+                  {round(savings.co2eqSavedPerYearPerM2 * m2)} kg
                 </strong>{" "}
                 of CO<sub>2</sub> savings per year for your house
               </p>
               <p>
                 Which corresponds to{" "}
                 <strong className="text-2xl">
-                  ${savings.costsSavedPerYearPerM2 * m2}
+                  ${round(savings.costsSavedPerYearPerM2 * m2)}
                 </strong>{" "}
                 of potential savings per year for your house.
               </p>
