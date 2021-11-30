@@ -1,20 +1,21 @@
-import type { NextPage } from "next";
-import Head from "next/head";
 import { useState } from "react";
-import classNames from "classnames";
 import Image from "next/image";
 
 type Savings = {
   kwhPerM2PerDay: number;
-  CO2eqSavedPerYearPerM2: number;
+  co2eqSavedPerYearPerM2: number;
   costsSavedPerYearPerM2: number;
 };
 
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
+const round = (number: number) => {
+  return Math.round(number * 100) / 100;
+};
+
 const Bridge = ({ next }: any) => {
   const [address, setAddress] = useState("");
-  const [m2, setm2] = useState(10);
+  const [m2, setm2] = useState<number>();
   const [loading, setLoading] = useState(false);
   const [savings, setSavings] = useState<Savings>();
 
@@ -24,12 +25,18 @@ const Bridge = ({ next }: any) => {
   const submitAddress = async () => {
     setLoading(true);
     await delay(1000);
-    setLoading(false);
-    setSavings({
-      kwhPerM2PerDay: 12,
-      CO2eqSavedPerYearPerM2: 42,
-      costsSavedPerYearPerM2: 420,
-    });
+
+    const url = `/api/estimate?address=${address}`;
+    fetch(url, { mode: "no-cors" })
+      .then((response) => response.json())
+      .then((json: Savings) => {
+        setLoading(false);
+        setSavings({
+          kwhPerM2PerDay: json.kwhPerM2PerDay,
+          co2eqSavedPerYearPerM2: json.co2eqSavedPerYearPerM2,
+          costsSavedPerYearPerM2: json.costsSavedPerYearPerM2,
+        });
+      });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -57,7 +64,7 @@ const Bridge = ({ next }: any) => {
               onKeyPress={handleKeyPress}
             />
             <input
-              type="text"
+              type="number"
               className="text-black p-2 rounded-md"
               placeholder="Roof m2"
               value={m2}
@@ -87,6 +94,7 @@ const Bridge = ({ next }: any) => {
               <div className="text-center flex justify-between w-48 mx-auto mb-6">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <button
+                    key={n}
                     className={classNames(
                       "border-2 border-white w-8 h-8 hover:bg-white hover:bg-opacity-20",
                       { "bg-white bg-opacity-50": n === radius }
@@ -110,14 +118,16 @@ const Bridge = ({ next }: any) => {
                 <p>
                   You can save{" "}
                   <strong className="text-2xl">
-                    {savings.kwhPerM2PerDay * m2 * 365 * radius} kwh
+                    {round(savings.kwhPerM2PerDay * (m2 || 1) * 365 * radius)}{" "}
+                    kwh
                   </strong>{" "}
                   for your {showSlider ? "community" : "house"} per year
                 </p>
                 <p>
                   Which equals{" "}
                   <strong className="text-2xl">
-                    {savings.CO2eqSavedPerYearPerM2 * m2 * radius} kg
+                    {round(savings.co2eqSavedPerYearPerM2 * (m2 || 1) * radius)}{" "}
+                    kg
                   </strong>{" "}
                   of CO<sub>2</sub> savings per year for your{" "}
                   {showSlider ? "community" : "house"}
@@ -125,7 +135,8 @@ const Bridge = ({ next }: any) => {
                 <p>
                   Which corresponds to{" "}
                   <strong className="text-2xl">
-                    ${savings.costsSavedPerYearPerM2 * m2 * radius}
+                    $
+                    {round(savings.costsSavedPerYearPerM2 * (m2 || 1) * radius)}
                   </strong>{" "}
                   of potential savings per year for your{" "}
                   {showSlider ? "community" : "house"}.
@@ -169,3 +180,9 @@ const Bridge = ({ next }: any) => {
 };
 
 export default Bridge;
+function classNames(
+  arg0: string,
+  arg1: { "bg-white bg-opacity-50": boolean }
+): string | undefined {
+  throw new Error("Function not implemented.");
+}
